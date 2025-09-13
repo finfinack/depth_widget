@@ -1,6 +1,7 @@
 import Toybox.Graphics;
 import Toybox.WatchUi;
-import Toybox.Sensor;
+using Toybox.Activity;
+using Toybox.Sensor;
 
 class depthView extends WatchUi.View {
 
@@ -32,7 +33,7 @@ class depthView extends WatchUi.View {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
-        self.updateDepth(Sensor.getInfo());
+        self.updateDepth();
         // Request a redraw when the widget is shown
         WatchUi.requestUpdate();
     }
@@ -41,6 +42,8 @@ class depthView extends WatchUi.View {
     function onUpdate(dc as Dc) as Void {
         // Call the parent onUpdate function to redraw the layout
         // View.onUpdate(dc);
+
+        self.updateDepth();
 
         var labelFont = Graphics.FONT_SMALL;
         var valueFont = Graphics.FONT_LARGE;
@@ -68,7 +71,9 @@ class depthView extends WatchUi.View {
     function onHide() as Void {
     }
 
-    function updateDepth(info as Sensor.Info) {
+    function updateDepth() as Void {
+        var info = Activity.getActivityInfo();
+
         // See Activity.Info in the documentation for available information.
         // - altitude as Lang.Float or Null
         //   The altitude above mean sea level in meters (m).
@@ -76,7 +81,7 @@ class depthView extends WatchUi.View {
         //   The ambient pressure in Pascals (Pa).
         // - rawAmbientPressure as Lang.Float or Null
         //   The raw ambient pressure in Pascals (Pa).
-        var current_pressure = info.pressure;
+        var current_pressure = info.ambientPressure;
         if (start_pressure == null) {
             start_pressure = current_pressure;
         }
