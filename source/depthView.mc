@@ -53,7 +53,9 @@ class depthView extends WatchUi.View {
         var labelMaxDepthY = (height / 7) * 4;
         var maxDepthY = (height / 7) * 5;
 
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+        dc.clear();
+
         dc.drawText(width / 2, labelDepthY, labelFont, depth_label, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(width / 2, depthY, valueFont, depth, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(width / 2, labelMaxDepthY, labelFont, max_depth_label, Graphics.TEXT_JUSTIFY_CENTER);
