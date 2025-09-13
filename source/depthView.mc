@@ -99,18 +99,18 @@ class depthView extends WatchUi.View {
         var pressure_diff = current_pressure - start_pressure;
         var depth = pressure_diff/water_pressure;
         if (unit == System.UNIT_METRIC) {
-            self.depth = depth.format("%.2f");
+            self.depth = depth.format("%.2f m");
         } else {
-            self.depth = (depth*feet_per_meter).format("%1f");
+            self.depth = (depth*feet_per_meter).format("%1f ft");
         }
 
         if (depth > self.max_depth_value) {
             self.max_depth_value = depth;
         }
         if (unit == System.UNIT_METRIC) {
-            self.max_depth = self.max_depth_value.format("%.2f");
+            self.max_depth = self.max_depth_value.format("%.2f m");
         } else {
-            self.max_depth = (self.max_depth_value*feet_per_meter).format("%1f");
+            self.max_depth = (self.max_depth_value*feet_per_meter).format("%1f ft");
         }
     }
 
