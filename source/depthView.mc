@@ -12,9 +12,9 @@ class depthView extends WatchUi.View {
     const water_pressure = 9806.65; // pascal per meter
 
     private var start_pressure;
-    private var max_depth_value = 0.0;
-    private var max_depth = "n/a";
     private var depth = "n/a";
+    private var max_depth = "n/a";
+    private var max_depth_value = 0.0;
 
     var unit; // System.UNIT_METRIC or System.UNIT_STATUTE
 
@@ -87,8 +87,8 @@ class depthView extends WatchUi.View {
         }
 
         if (current_pressure == null || start_pressure == null) {
-            self.depth = "n/a";
-            self.max_depth = "n/a";
+            depth = "n/a";
+            max_depth = "n/a";
             return;
         }
         // Recalibrate if the watch seems to be out of water.
@@ -97,20 +97,20 @@ class depthView extends WatchUi.View {
         }
 
         var pressure_diff = current_pressure - start_pressure;
-        var depth = pressure_diff/water_pressure;
+        var depth_value = pressure_diff/water_pressure;
         if (unit == System.UNIT_METRIC) {
-            self.depth = depth.format("%.2f m");
+            depth = depth_value.format("%.2f") + "m";
         } else {
-            self.depth = (depth*feet_per_meter).format("%1f ft");
+            depth = (depth_value*feet_per_meter).format("%1f") + "ft";
         }
 
-        if (depth > self.max_depth_value) {
-            self.max_depth_value = depth;
+        if (depth_value > max_depth_value) {
+            max_depth_value = depth_value;
         }
         if (unit == System.UNIT_METRIC) {
-            self.max_depth = self.max_depth_value.format("%.2f m");
+            max_depth = max_depth_value.format("%.2f") + "m";
         } else {
-            self.max_depth = (self.max_depth_value*feet_per_meter).format("%1f ft");
+            max_depth = (max_depth_value*feet_per_meter).format("%1f") + "ft";
         }
     }
 
