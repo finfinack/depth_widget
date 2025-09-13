@@ -21,6 +21,11 @@ class depthApp extends Application.AppBase {
         return [ new depthView() ];
     }
 
+    (:glance)
+    public function getGlanceView() as [ WatchUi.GlanceView ] or [ WatchUi.GlanceView, WatchUi.GlanceViewDelegate ] or Null {
+        var view = new $.depthGlanceView();
+        return [view] as [ WatchUi.GlanceView ];
+    }
 }
 
 function getApp() as depthApp {

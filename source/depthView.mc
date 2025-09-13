@@ -1,22 +1,24 @@
 import Toybox.Graphics;
 import Toybox.WatchUi;
-using Toybox.Activity;
-using Toybox.Sensor;
+import Toybox.Activity;
+import Toybox.Timer;
 
 class depthView extends WatchUi.View {
 
     const depth_label = "Depth";
-    const max_depth_label = "Max Depth";
+    // const max_depth_label = "Max Depth";
 
     const feet_per_meter = 3.28084;
     const water_pressure = 9806.65; // pascal per meter
 
-    private var start_pressure;
-    private var depth = "n/a";
-    private var max_depth = "n/a";
-    private var max_depth_value = 0.0;
+    var start_pressure;
+    var depth = "n/a";
+    // private var max_depth = "n/a";
+    // private var max_depth_value = 0.0;
 
     var unit; // System.UNIT_METRIC or System.UNIT_STATUTE
+
+    private var _dataTimer as Timer.Timer?;
 
     function initialize() {
         View.initialize();
@@ -27,6 +29,9 @@ class depthView extends WatchUi.View {
     // Load your resources here
     function onLayout(dc as Dc) as Void {
         setLayout(Rez.Layouts.MainLayout(dc));
+
+        _dataTimer = new Timer.Timer();
+        _dataTimer.start(method(:updateDepth), 500, true);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -34,6 +39,7 @@ class depthView extends WatchUi.View {
     // loading resources into memory.
     function onShow() as Void {
         self.updateDepth();
+
         // Request a redraw when the widget is shown
         WatchUi.requestUpdate();
     }
@@ -43,7 +49,7 @@ class depthView extends WatchUi.View {
         // Call the parent onUpdate function to redraw the layout
         // View.onUpdate(dc);
 
-        self.updateDepth();
+        // self.updateDepth();
 
         var labelFont = Graphics.FONT_SMALL;
         var valueFont = Graphics.FONT_LARGE;
@@ -51,18 +57,20 @@ class depthView extends WatchUi.View {
         var width = dc.getWidth();
         var height = dc.getHeight();
 
-        var labelDepthY = height / 7;
-        var depthY = (height / 7) * 2;
-        var labelMaxDepthY = (height / 7) * 4;
-        var maxDepthY = (height / 7) * 5;
+        var labelDepthY = height / 4;
+        var depthY = (height / 4) * 2;
+        // var labelDepthY = height / 7;
+        // var depthY = (height / 7) * 2;
+        // var labelMaxDepthY = (height / 7) * 4;
+        // var maxDepthY = (height / 7) * 5;
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
 
         dc.drawText(width / 2, labelDepthY, labelFont, depth_label, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(width / 2, depthY, valueFont, depth, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(width / 2, labelMaxDepthY, labelFont, max_depth_label, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(width / 2, maxDepthY, valueFont, max_depth, Graphics.TEXT_JUSTIFY_CENTER);
+        // dc.drawText(width / 2, labelMaxDepthY, labelFont, max_depth_label, Graphics.TEXT_JUSTIFY_CENTER);
+        // dc.drawText(width / 2, maxDepthY, valueFont, max_depth, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -71,8 +79,16 @@ class depthView extends WatchUi.View {
     function onHide() as Void {
     }
 
+    //! On a timer interval, read the pressure sensor and update the depth.
     function updateDepth() as Void {
         var info = Activity.getActivityInfo();
+        if (info == null) {
+            depth = "n/a";
+            // max_depth = "n/a";
+
+            WatchUi.requestUpdate();
+            return;
+        }
 
         // See Activity.Info in the documentation for available information.
         // - altitude as Lang.Float or Null
@@ -88,7 +104,9 @@ class depthView extends WatchUi.View {
 
         if (current_pressure == null || start_pressure == null) {
             depth = "n/a";
-            max_depth = "n/a";
+            // max_depth = "n/a";
+
+            WatchUi.requestUpdate();
             return;
         }
         // Recalibrate if the watch seems to be out of water.
@@ -104,14 +122,16 @@ class depthView extends WatchUi.View {
             depth = (depth_value*feet_per_meter).format("%1f") + "ft";
         }
 
-        if (depth_value > max_depth_value) {
-            max_depth_value = depth_value;
-        }
-        if (unit == System.UNIT_METRIC) {
-            max_depth = max_depth_value.format("%.2f") + "m";
-        } else {
-            max_depth = (max_depth_value*feet_per_meter).format("%1f") + "ft";
-        }
+        // if (depth_value > max_depth_value) {
+        //     max_depth_value = depth_value;
+        // }
+        // if (unit == System.UNIT_METRIC) {
+        //     max_depth = max_depth_value.format("%.2f") + "m";
+        // } else {
+        //     max_depth = (max_depth_value*feet_per_meter).format("%1f") + "ft";
+        // }
+
+        WatchUi.requestUpdate();
     }
 
 }
